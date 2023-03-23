@@ -1,0 +1,32 @@
+import socket
+import threading
+
+# Set up the client socket
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_socket.connect(('localhost', 5555))
+
+# Function to handle receiving messages from the server
+def receive_messages():
+    while True:
+        try:
+            message = client_socket.recv(1024).decode('utf-8')
+            if message:
+                print(message)
+            else:
+                break
+        except:
+            break
+
+
+name = input("digite seu nome: ")
+
+# Start a new thread to handle receiving messages from the server
+threading.Thread(target=receive_messages).start()
+
+client_socket.sendall(f'{name} joined the chat! \n'.encode('utf-8'))
+
+# Loop to read messages from the user and send them to the server
+while True:
+    message = name + ": "+ input()
+    if message:
+        client_socket.sendall(message.encode('utf-8'))
